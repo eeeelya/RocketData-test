@@ -1,5 +1,9 @@
+from django.db.models import Q
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from django_filters import FilterSet, CharFilter, filters
+
+from element.models import Element
 
 
 class CityFilter(admin.SimpleListFilter):
@@ -21,3 +25,15 @@ class CityFilter(admin.SimpleListFilter):
             return queryset
 
         return queryset.filter(contacts__address__city=self.value())
+
+
+class ElementSearchFilter(FilterSet):
+    country = filters.CharFilter(method="country_filter", field_name="Country filter")
+    product_id = filters.NumberFilter(field_name="products__id")
+
+    class Meta:
+        model = Element
+        fields = ("country", "product_id")
+
+    def country_filter(self, queryset, name, value):
+        return Element.objects.filter(Q(contacts__address__country=value))

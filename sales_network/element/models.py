@@ -33,7 +33,7 @@ class Element(MPTTModel):
     products = models.ManyToManyField(Product, through="ElementProducts")
     employees = models.ManyToManyField(User, through="ElementEmployees")
     parent = TreeForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
-    debt_to_supplier = models.DecimalField(max_digits=10, decimal_places=2)
+    debt_to_supplier = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(default=datetime.datetime.now)
 
     class MPTTMeta:
