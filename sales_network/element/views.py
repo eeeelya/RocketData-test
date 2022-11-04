@@ -1,9 +1,8 @@
-from rest_framework import viewsets, mixins, status
+from rest_framework import viewsets, mixins, status, views
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
-
 
 from core.permissions import IsActive
 from element.serializers import (
@@ -13,6 +12,8 @@ from element.serializers import (
 )
 from element.models import Element, ElementProducts, ElementEmployees
 from element.filters import ElementSearchFilter
+from element.serializers import QrCodeSserializer
+from element.tasks import send_qrcode_on_email
 
 
 class ElementViewSet(viewsets.ModelViewSet):
@@ -50,3 +51,13 @@ class ElementEmployeesViewSet(
 ):
     queryset = ElementEmployees.objects.all()
     serializer_class = ElementEmployeesSerializer
+
+
+class QrCodeApiView(views.APIView):
+    def post(self, request):
+        serializer = QrCodeSserializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        send_qrcode_on_email.delay(id=serializer.data["id"], user_email=request.user.email)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

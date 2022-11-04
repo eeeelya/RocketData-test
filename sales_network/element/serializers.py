@@ -20,3 +20,7 @@ class ElementEmployeesSerializer(serializers.ModelSerializer):
     class Meta:
         model = ElementEmployees
         fields = "__all__"
+
+
+class QrCodeSserializer(serializers.Serializer):
+    id = serializers.CharField()
