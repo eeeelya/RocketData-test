@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from django_filters import FilterSet, CharFilter, filters
+from django_filters import FilterSet, filters
 
 from element.models import Element
 
