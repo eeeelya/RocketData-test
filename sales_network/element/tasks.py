@@ -15,6 +15,10 @@ from sales_network.settings import EMAIL_HOST_USER
 @shared_task
 def increase_debt():
     element_for_increase = Element.objects.order_by("?").first()
+
+    if not element_for_increase:
+        return
+
     element_for_increase.debt_to_supplier = F("debt_to_supplier") + random.randint(
         0, 500
     )
@@ -24,6 +28,10 @@ def increase_debt():
 @shared_task
 def reduce_debt():
     element_for_reduce = Element.objects.order_by("?").first()
+
+    if not element_for_reduce:
+        return
+
     reduction_size = random.randint(100, 10000)
 
     if element_for_reduce.debt_to_supplier <= reduction_size:

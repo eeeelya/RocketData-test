@@ -8,6 +8,10 @@ class ElementSerializer(serializers.ModelSerializer):
         model = Element
         fields = "__all__"
         read_only_fields = ("debt_to_supplier", "created_at")
+        extra_kwargs = {
+            "name": {"required": True},
+            "contacts": {"required": True},
+        }
 
 
 class ElementProductsSerializer(serializers.ModelSerializer):
