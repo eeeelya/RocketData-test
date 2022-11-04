@@ -3,6 +3,7 @@ from mptt.admin import DraggableMPTTAdmin
 
 from element.models import Element, ElementEmployees, ElementProducts
 from element.filters import CityFilter
+from element.tasks import admin_clear_debt
 
 
 class ElementAdmin(DraggableMPTTAdmin):
@@ -14,7 +15,11 @@ class ElementAdmin(DraggableMPTTAdmin):
 
     @admin.action(description="Clear the debt to the supplier")
     def clear_debt(self, request, queryset):
-        queryset.update(debt_to_supplier=0.00)
+        if len(queryset) < 20:
+            queryset.update(debt_to_supplier=0.00)
+        else:
+            for query in queryset:
+                admin_clear_debt.delay(id=query.id)
 
 
 admin.site.register(Element, ElementAdmin)
