@@ -1,9 +1,8 @@
 import random
 
 import factory.fuzzy
-from faker import Faker
 
-from element.models import Element, ElementProducts
+from element.models import Element
 
 
 def random_element_object_selection():
