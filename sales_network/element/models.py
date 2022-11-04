@@ -1,10 +1,13 @@
-import datetime
+import logging
 
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from mptt.models import MPTTModel, TreeForeignKey
 
 from product.models import Product
+
+logger = logging.getLogger(__name__)
 
 
 def get_default_contacts():
@@ -28,16 +31,16 @@ class Element(MPTTModel):
         IE = 4
 
     type = models.IntegerField(choices=Type.choices, default=Type.FACTORY)
-    name = models.CharField(default="", max_length=200)
+    name = models.CharField(default="", max_length=50)
     contacts = models.JSONField(default=get_default_contacts)
     products = models.ManyToManyField(Product, through="ElementProducts")
     employees = models.ManyToManyField(User, through="ElementEmployees")
     parent = TreeForeignKey("self", on_delete=models.CASCADE, null=True, blank=True, related_name="children")
     debt_to_supplier = models.DecimalField(default=0.00, max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(default=datetime.datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class MPTTMeta:
-        order_insertion_by = ['name']
+        order_insertion_by = ["name"]
 
     def __str__(self):
         return f"{self.name} | {self.type}"
@@ -46,9 +49,13 @@ class Element(MPTTModel):
         if self.type == 0:
             self.parent = None
             super(Element, self).save(*args, **kwargs)
+        elif not self.parent:
+            logger.error("Required to select the previous level in the hierarchy.")
         else:
             if self.parent.type >= self.type:
-                raise ValueError("You can't add parent with a lower level in the hierarchy.")
+                logger.error(
+                    "You can't add parent with a lower level in the hierarchy."
+                )
             else:
                 super(Element, self).save(*args, **kwargs)
 
@@ -72,4 +79,4 @@ class ElementEmployees(models.Model):
         db_table = "element_employees"
 
     def __str__(self):
-        return f"{self.element.name} | {self.employee.name}"
+        return f"{self.element.name} | {self.employee}"
