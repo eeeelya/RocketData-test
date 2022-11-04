@@ -17,13 +17,13 @@ from django.contrib import admin
 from djoser.views import UserViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.urls import path, include
+from core.login_view import LoginView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("register/", UserViewSet.as_view({"post": "create"}), name="register"),
-    path("login/", TokenObtainPairView.as_view(), name="login"),
-    path("activation/", UserViewSet.as_view({"post": "activation"}), name="activation"),
+    path("login/", LoginView.as_view(), name="login"),
 
     path("api/v1/", include("element.urls")),
     path("api/v1/", include("product.urls")),
