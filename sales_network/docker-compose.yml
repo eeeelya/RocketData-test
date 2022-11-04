@@ -16,6 +16,9 @@ services:
       - .env
     depends_on:
       - db
+      - redis
+      - celery
+      - celery_beat
 
   db:
     image: postgres:14-alpine
@@ -30,6 +33,35 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5434:5432"
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+
+  celery:
+    container_name: celery
+    restart: always
+    build:
+      context: .
+    command: celery -A sales_network worker -l info
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - redis
+    env_file:
+      - .env
+
+  celery_beat:
+    container_name: celery_beat
+    build: .
+    command: celery -A sales_network beat -l info
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - redis
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

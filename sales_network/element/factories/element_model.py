@@ -33,7 +33,7 @@ class ElementFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "element-%d" % n)
     contacts = factory.LazyFunction(random_contacts)
     parent = factory.LazyFunction(random_element_object_selection)
-    debt_to_supplier = factory.Faker("pydecimal", left_digits=8, right_digits=2, positive=True)
+    debt_to_supplier = factory.Faker("pydecimal", left_digits=4, right_digits=2, positive=True)
 
     class Meta:
         model = Element
