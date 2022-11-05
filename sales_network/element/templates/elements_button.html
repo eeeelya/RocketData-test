@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Elements</title>
+
+</head>
+<body>
+    <label>Enter element id:</label>
+    <input id="element_id" type="number" value="0">
+    <button onclick="postData()">Get element</button>
+
+    <p id="name"></p>
+    <p id="contacts"></p>
+
+    <button style="display: none" id="copy_button" onclick="copy_contacts()">Copy contacts</button>
+</body>
+</html>
+<script>
+    async function postData() {
+        const element_id = document.getElementById("element_id").value
+
+        const response_data = await fetch(`http://localhost:8000/api/v1/element/${element_id}/`)
+            .then((response) =>
+                response.json()
+            )
+
+        const text = document.getElementById("name")
+        text.innerText = response_data?.name
+
+        const contacts = document.getElementById("contacts")
+        contacts.innerText = response_data?.contacts.email + "\n" + JSON.stringify(response_data.contacts.address)
+
+        const button = document.getElementById("copy_button")
+        button.style.display = "block"
+
+        return response_data
+    }
+
+    async function copy_contacts() {
+        try {
+            const permission = await navigator.permissions.query({name:'clipboard-write'});
+
+            if (permission.state === 'denied') {
+                throw new Error('Not allowed to write to clipboard.');
+            }
+
+            const contacts = document.getElementById("contacts").textContent;
+            await navigator.clipboard.writeText(contacts);
+            alert("Copied the text: " + contacts);
+        }
+        catch (error) {
+            console.error(error.message);
+        }
+    }
+</script>
