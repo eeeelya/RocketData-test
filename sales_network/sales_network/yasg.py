@@ -8,9 +8,9 @@ from drf_yasg.views import get_schema_view
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="MedicalAssistant API",
+        title="Sales Network API",
         default_version="v1",
-        description="API for MedicalAssistant project.",
+        description="API for RocketData-test project.",
         contact=openapi.Contact(email="goooroshchik@gmail.com"),
     ),
     public=True,
