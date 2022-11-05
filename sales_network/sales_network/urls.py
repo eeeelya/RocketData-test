@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from djoser.views import UserViewSet
-from rest_framework_simplejwt.views import TokenObtainPairView
 from django.urls import path, include
 from core.login_view import LoginView
+
+from sales_network.yasg import urlpatterns as doc_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -27,4 +28,4 @@ urlpatterns = [
 
     path("api/v1/", include("element.urls")),
     path("api/v1/", include("product.urls")),
-]
+] + doc_urls
