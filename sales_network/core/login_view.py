@@ -1,12 +1,11 @@
 from rest_framework.response import Response
 from rest_framework import views, status
-from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.middleware import csrf
 from django.contrib.auth import authenticate
-from djoser.serializers import UserCreateSerializer
 
 from sales_network import settings
+from core.login_serializer import LoginSerializer
 
 
 def get_tokens_for_user(user):
@@ -20,7 +19,7 @@ def get_tokens_for_user(user):
 
 class LoginView(views.APIView):
     def post(self, request, format=None):
-        serializer = UserCreateSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data)
         serializer.is_valid()
         response = Response()
 
